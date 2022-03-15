@@ -1,16 +1,15 @@
-# FROM golang:latest AS builder
-# ADD . /app
-# WORKDIR /app
-# RUN go mod download
-# RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o /main .
+# syntax=docker/dockerfile:1
 
-# FROM scratch
-# ENV MONGODB_USERNAME=MONGODB_USERNAME MONGODB_PASSWORD=MONGODB_PASSWORD MONGODB_ENDPOINT=MONGODB_ENDPOINT
-# COPY --from=builder /main ./
-# ENTRYPOINT ["./main"]
-# EXPOSE 8080
 FROM golang:latest
-ENV MONGODB_USERNAME=MONGODB_USERNAME MONGODB_PASSWORD=MONGODB_PASSWORD MONGODB_ENDPOINT=MONGODB_ENDPOINT
-COPY . .
+WORKDIR /app
 
-CMD main.exe
+COPY go.build.mod ./go.mod
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
+RUN go build -o /urlplaylists
+
+EXPOSE 8080
+
+CMD [ "/urlplaylists" ]

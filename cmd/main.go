@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/dibrinsofor/urlplaylists/handlers"
+	"urlplaylists/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 

@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"urlplaylists/models"
 
-	db "github.com/dibrinsofor/urlplaylists"
-	"github.com/dibrinsofor/urlplaylists/models"
 	"github.com/gin-gonic/gin"
 )
 
