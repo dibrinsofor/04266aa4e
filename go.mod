@@ -7,7 +7,7 @@ require (
 	go.mongodb.org/mongo-driver v1.8.3
 )
 
-replace github.com/dibrinsofor/urlplaylists => ../urlplaylists
+// replace github.com/dibrinsofor/urlplaylists => ../urlplaylists
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"urlplaylists/models"
+
+	"github.com/dibrinsofor/urlplaylists/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,7 @@ func AddUrl(c *gin.Context) {
 		return
 	}
 
-	err := db.CreateURL(&u)
+	err := models.CreateURL(&u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message":   "unable to store playlist.",

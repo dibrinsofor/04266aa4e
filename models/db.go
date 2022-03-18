@@ -1,4 +1,4 @@
-package db
+package models
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/dibrinsofor/urlplaylists/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,7 +46,7 @@ func GetConnection() (*mongo.Client, context.Context, context.CancelFunc) {
 	return client, ctx, cancel
 }
 
-func CreateURL(playlist *models.Playlist) error {
+func CreateURL(playlist *Playlist) error {
 	client, ctx, cancel := GetConnection()
 	defer cancel()
 	defer client.Disconnect(ctx)

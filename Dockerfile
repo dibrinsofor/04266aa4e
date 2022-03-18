@@ -1,15 +1,17 @@
 # syntax=docker/dockerfile:1
 
 FROM golang:latest
-WORKDIR /app
-
-COPY go.build.mod ./go.mod
-COPY go.sum ./
+WORKDIR /go/src/github.com/dibrinsofor/urlplaylists
+# COPY go.mod ./
+# COPY go.sum ./
+COPY . ./
 RUN go mod download
 
-COPY *.go ./
-RUN go build -o /urlplaylists
+ENV GO111MODULE=on
+RUN go mod tidy
+
+RUN go build cmd/main.go
 
 EXPOSE 8080
 
-CMD [ "/urlplaylists" ]
+CMD [ "urlplaylists/main" ]
