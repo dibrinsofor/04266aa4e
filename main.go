@@ -12,5 +12,5 @@ func main() {
 	r.GET("/", handlers.HealthCheck())
 	r.POST("/list", handlers.AddUrl)
 
-	r.Run()
+	r.Run(":8080")
 }

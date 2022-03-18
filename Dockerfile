@@ -10,8 +10,8 @@ RUN go mod download
 ENV GO111MODULE=on
 RUN go mod tidy
 
-RUN go build cmd/main.go
+RUN go build -o /urlplaylists
 
 EXPOSE 8080
 
-CMD [ "urlplaylists/main" ]
+CMD [ "/urlplaylists" ]
