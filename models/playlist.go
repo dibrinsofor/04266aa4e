@@ -15,8 +15,9 @@ import (
 // hmm chale e check like mongodb already stores update time for each task
 
 type Playlist struct {
-	ID   primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Urls []string           `json:"urls" bson:"urls"`
+	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Urls     []string           `json:"urls" bson:"urls"`
+	RandSlug string             `json:"rand_slug"`
 }
 
 // type Urls struct {

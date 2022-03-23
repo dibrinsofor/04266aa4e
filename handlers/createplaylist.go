@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/dibrinsofor/urlplaylists/lib"
 	"github.com/dibrinsofor/urlplaylists/models"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +19,9 @@ func AddUrl(c *gin.Context) {
 		})
 		return
 	}
+
+	u.RandSlug = lib.GenShortUrl()
+	fmt.Printf(u.RandSlug)
 
 	err := models.AddUrlsToCollection(&u)
 	if err != nil {
