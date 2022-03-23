@@ -18,7 +18,7 @@ func AddUrl(c *gin.Context) {
 		return
 	}
 
-	err := models.CreateURL(&u)
+	err := models.AddUrlsToCollection(&u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message":   "unable to store playlist.",
