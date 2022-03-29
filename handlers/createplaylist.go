@@ -6,8 +6,8 @@ import (
 
 	"github.com/dibrinsofor/urlplaylists/lib"
 	"github.com/dibrinsofor/urlplaylists/models"
-
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddUrl(c *gin.Context) {
@@ -20,9 +20,10 @@ func AddUrl(c *gin.Context) {
 		return
 	}
 
-	u.RandSlug = lib.GenShortUrl()
+	u.RandSlug = lib.GenShortSlug()
 	fmt.Printf(u.RandSlug)
 
+	u.ID = primitive.NewObjectID()
 	err := models.AddUrlsToCollection(&u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

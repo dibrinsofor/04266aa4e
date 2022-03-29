@@ -8,63 +8,70 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-const (
-	connectTimeout           = 10
-	connectionStringTemplate = "mongodb+srv://%s:%s@cluster0.r3cqf.mongodb.net/%s?retryWrites=true&w=majority"
-)
+// (*mongo.Client, context.Context, context.CancelFunc)
 
-func ConstructURI() string {
+func GetConnection() (*mongo.Client, context.Context) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	username := os.Getenv("MONGODB_USERNAME")
-	password := os.Getenv("MONGODB_PASSWORD")
-	dbName := os.Getenv("MONGODB_DBNAME")
 
-	connectionURI := fmt.Sprintf(connectionStringTemplate, username, password, dbName)
-	return connectionURI
-}
-
-func GetConnection() (*mongo.Client, context.Context, context.CancelFunc) {
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(ConstructURI()))
+	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
 	if err != nil {
-		log.Printf("Failed to create client: %v", err)
+		log.Printf("Failed to create client: %s", err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*30)
 	err = client.Connect(ctx)
 	if err != nil {
-		log.Printf("Failed to create mongodb cluster: %v", err)
+		log.Printf("Failed to connect to database cluster: %s", err)
 	}
 
-	// Pinging to make sure we can connect to db
-	err = client.Ping(ctx, nil)
+	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		log.Printf("Failed to ping mongodb cluster: %v", err)
+		log.Printf("Failed to ping mongodb cluster: %s", err)
 	}
-	fmt.Print("Connected to MongoDB")
-	return client, ctx, cancel
+	// databases, err := client.ListDatabaseNames(ctx, bson.M{})
+	// if err != nil {
+	// 	log.Printf("Failed to make db request: %s", err)
+	// }
+	// fmt.Println(databases)
+	return client, ctx
 }
 
 func AddUrlsToCollection(playlist *Playlist) error {
-	client, ctx, cancel := GetConnection()
-	defer cancel()
+	client, ctx := GetConnection()
 	defer client.Disconnect(ctx)
 
-	playlist.ID = primitive.NewObjectID()
+	// playlist.ID = primitive.NewObjectID()
 
-	_, err := client.Database("urlplaylists").Collection("urlplaylists").InsertOne(ctx, playlist)
+	testtt, err := client.Database("urlplaylists").Collection("urlplaylists").InsertOne(ctx, playlist)
 	if err != nil {
 		log.Printf("Unable to persist playlist to database: %v", err)
 		return err
 	}
 
+	fmt.Println(testtt.InsertedID)
+
 	return nil
+}
+
+func CheckPlaylistSlug(slug string) {
+	client, ctx := GetConnection()
+	defer client.Disconnect(ctx)
+
+	filter := bson.D{{"rand_slug", slug}}
+
+	var playlist bson.M
+	err := client.Database("urlplaylists").Collection("urlplaylists").FindOne(ctx, filter).Decode(&playlist)
+	if err != nil {
+
+	}
+
 }

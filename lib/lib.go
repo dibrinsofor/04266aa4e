@@ -4,9 +4,9 @@ import (
 	"math/rand"
 )
 
-func GenShortUrl() string {
+func GenShortSlug() string {
 	var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321")
-	s := make([]rune, 5)
+	s := make([]rune, 4)
 	for i := range s {
 		s[i] = chars[rand.Intn(len(chars))]
 	}
