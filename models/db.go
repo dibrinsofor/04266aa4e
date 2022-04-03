@@ -7,14 +7,20 @@ import (
 	"os"
 	"time"
 
+	"github.com/dibrinsofor/urlplaylists/lib"
+	"github.com/dibrinsofor/urlplaylists/models"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// (*mongo.Client, context.Context, context.CancelFunc)
+var client *mongo.Client
+
+// const (
+// 	collection = client.Database("urlplaylists").Collection("urlplaylists")
+// 	database   = client.Database("urlplaylists")
+// )
 
 func GetConnection() (*mongo.Client, context.Context) {
 	err := godotenv.Load()
@@ -22,7 +28,7 @@ func GetConnection() (*mongo.Client, context.Context) {
 		log.Fatal("Error loading .env file")
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
+	client, err = mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
 	if err != nil {
 		log.Printf("Failed to create client: %s", err)
 	}
@@ -37,41 +43,42 @@ func GetConnection() (*mongo.Client, context.Context) {
 	if err != nil {
 		log.Printf("Failed to ping mongodb cluster: %s", err)
 	}
-	// databases, err := client.ListDatabaseNames(ctx, bson.M{})
-	// if err != nil {
-	// 	log.Printf("Failed to make db request: %s", err)
-	// }
-	// fmt.Println(databases)
 	return client, ctx
 }
 
 func AddUrlsToCollection(playlist *Playlist) error {
 	client, ctx := GetConnection()
 	defer client.Disconnect(ctx)
-
-	// playlist.ID = primitive.NewObjectID()
-
-	testtt, err := client.Database("urlplaylists").Collection("urlplaylists").InsertOne(ctx, playlist)
+	result, err := client.Database("urlplaylists").Collection("urlplaylists").InsertOne(ctx, playlist)
 	if err != nil {
 		log.Printf("Unable to persist playlist to database: %v", err)
 		return err
 	}
 
-	fmt.Println(testtt.InsertedID)
+	fmt.Println(result.InsertedID)
 
 	return nil
 }
-
-func CheckPlaylistSlug(slug string) {
+func IsUniqueslug(slug string) error {
 	client, ctx := GetConnection()
 	defer client.Disconnect(ctx)
 
-	filter := bson.D{{"rand_slug", slug}}
-
-	var playlist bson.M
-	err := client.Database("urlplaylists").Collection("urlplaylists").FindOne(ctx, filter).Decode(&playlist)
+	var playlist models.Playlist
+	filter := models.Playlist{Key: "rand_slug", Value: slug}
+	count, err := client.Database("urlplaylists").Collection("urlplaylists").CountDocuments(ctx, filter)
 	if err != nil {
-
+		log.Print(err)
 	}
+	return err
+}
 
+// while slug is not unique, generate again
+
+func GetPlaylistSlug() string {
+	slug := lib.GenShortSlug()
+	// err := IsUniqueslug(slug)
+	// if err != nil {
+	// 	log.Print(err)
+	// }
+	return slug
 }
