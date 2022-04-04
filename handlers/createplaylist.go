@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/dibrinsofor/urlplaylists/lib"
 	"github.com/dibrinsofor/urlplaylists/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,8 +19,8 @@ func AddUrl(c *gin.Context) {
 		return
 	}
 
-	u.RandSlug = lib.GenShortSlug()
-	fmt.Printf(u.RandSlug)
+	u.RandSlug = models.GetPlaylistSlug()
+	log.Print(u.RandSlug)
 
 	u.ID = primitive.NewObjectID()
 	err := models.AddUrlsToCollection(&u)

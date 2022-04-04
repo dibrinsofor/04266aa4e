@@ -8,19 +8,14 @@ import (
 	"time"
 
 	"github.com/dibrinsofor/urlplaylists/lib"
-	"github.com/dibrinsofor/urlplaylists/models"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var client *mongo.Client
-
-// const (
-// 	collection = client.Database("urlplaylists").Collection("urlplaylists")
-// 	database   = client.Database("urlplaylists")
-// )
 
 func GetConnection() (*mongo.Client, context.Context) {
 	err := godotenv.Load()
@@ -59,26 +54,27 @@ func AddUrlsToCollection(playlist *Playlist) error {
 
 	return nil
 }
-func IsUniqueslug(slug string) error {
+func IsUniqueslug(slug string) bool {
 	client, ctx := GetConnection()
 	defer client.Disconnect(ctx)
 
-	var playlist models.Playlist
-	filter := models.Playlist{Key: "rand_slug", Value: slug}
+	filter := bson.D{{Key: "rand_slug", Value: slug}}
 	count, err := client.Database("urlplaylists").Collection("urlplaylists").CountDocuments(ctx, filter)
 	if err != nil {
 		log.Print(err)
 	}
-	return err
+	if count != 0 {
+		log.Print("slug not unique")
+		return false
+	}
+	return true
 }
-
-// while slug is not unique, generate again
 
 func GetPlaylistSlug() string {
 	slug := lib.GenShortSlug()
-	// err := IsUniqueslug(slug)
-	// if err != nil {
-	// 	log.Print(err)
-	// }
+
+	for !IsUniqueslug(slug) {
+		slug = lib.GenShortSlug()
+	}
 	return slug
 }
