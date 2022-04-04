@@ -78,3 +78,15 @@ func GetPlaylistSlug() string {
 	}
 	return slug
 }
+
+func FindPlaylistBySlug(slug string) (context.Context, *mongo.Cursor) {
+	client, ctx := GetConnection()
+	defer client.Disconnect(ctx)
+
+	filter := bson.D{{Key: "rand_slug", Value: slug}}
+	cursor, err := client.Database("urlplaylists").Collection("urlplaylists").Find(ctx, filter)
+	if err != nil {
+		log.Print(err)
+	}
+	return ctx, cursor
+}

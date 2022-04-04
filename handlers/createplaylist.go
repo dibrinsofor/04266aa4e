@@ -31,6 +31,8 @@ func AddUrl(c *gin.Context) {
 		})
 	}
 
+	// TODO construct a new uri an pass that in the response too
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "playlist successfully stored.",
 		"data":    u,
