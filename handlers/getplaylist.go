@@ -8,31 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RequestUrlPlaylist struct {
-	RandSlug string `uri:"slug" binding:"required"`
-}
-
-func GetUrl(c *gin.Context) {
-	var u RequestUrlPlaylist
-	var playlist models.Playlist
-
-	if c.ShouldBindUri(&u) != nil {
+func GetUrls(c *gin.Context) {
+	slug := c.Param("rand_slug")
+	playlist, err := models.FindPlaylistBySlug(slug)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+			"message": "unable to find playlist.",
 		})
+		return
 	}
-	slug := u.RandSlug
-	ctx, cursor := models.FindPlaylistBySlug(slug)
-	if err := cursor.All(ctx, &playlist); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "failed to find user.",
-		})
-	}
-	defer cursor.Close(ctx)
 	fmt.Print(playlist)
-
-	// TODO check for invalid slug passed or too long
-	// TODO find user by slug
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "playlist retrieved succesfully",

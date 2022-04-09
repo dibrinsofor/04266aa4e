@@ -17,7 +17,7 @@ func main() {
 	// r.Use(cors.New(corsConfig))
 	r.GET("/health", handlers.HealthCheck())
 	r.POST("/", handlers.AddUrl)
-	r.GET("/:slug", handlers.GetUrl)
+	r.GET("/:slug", handlers.GetUrls)
 
 	r.Run(":8080")
 }

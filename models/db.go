@@ -70,6 +70,7 @@ func IsUniqueslug(slug string) bool {
 	return true
 }
 
+// TODO: consider storing hash of slug instead of wait generation
 func GetPlaylistSlug() string {
 	slug := lib.GenShortSlug()
 
@@ -79,14 +80,15 @@ func GetPlaylistSlug() string {
 	return slug
 }
 
-func FindPlaylistBySlug(slug string) (context.Context, *mongo.Cursor) {
+// TODO: figure out indexing for slug
+func FindPlaylistBySlug(slug string) (Playlist, error) {
 	client, ctx := GetConnection()
-	defer client.Disconnect(ctx)
 
-	filter := bson.D{{Key: "rand_slug", Value: slug}}
-	cursor, err := client.Database("urlplaylists").Collection("urlplaylists").Find(ctx, filter)
+	var playlist Playlist
+
+	err := client.Database("urlplaylists").Collection("urlplaylists").FindOne(ctx, Playlist{RandSlug: slug}).Decode(&playlist)
 	if err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
-	return ctx, cursor
+	return playlist, err
 }
