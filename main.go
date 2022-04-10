@@ -15,7 +15,9 @@ func main() {
 	// corsConfig.AddAllowMethods("OPTIONS")
 
 	// r.Use(cors.New(corsConfig))
+	// TODO: setup auth before "/all" route
 	r.GET("/health", handlers.HealthCheck())
+	r.GET("/all", handlers.GetAllPlaylists)
 	r.POST("/", handlers.AddUrl)
 	r.GET("/:slug", handlers.GetUrls)
 

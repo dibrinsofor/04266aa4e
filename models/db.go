@@ -92,3 +92,18 @@ func FindPlaylistBySlug(slug string) (Playlist, error) {
 	}
 	return playlist, err
 }
+
+func FindAllPlaylists() (*[]Playlist, error) {
+	client, ctx := GetConnection()
+	cursor, err := client.Database("urlplaylists").Collection("urlplaylists").Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	var playlists []Playlist
+	if err = cursor.All(ctx, &playlists); err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	return &playlists, nil
+}
