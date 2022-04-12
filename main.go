@@ -18,7 +18,7 @@ func main() {
 	// TODO: setup auth before "/all" route
 	r.GET("/health", handlers.HealthCheck())
 	r.GET("/all", handlers.GetAllPlaylists)
-	r.POST("/", handlers.AddUrl)
+	r.POST("/", handlers.AddPlaylist)
 	r.GET("/:slug", handlers.GetUrls)
 
 	r.Run(":8080")

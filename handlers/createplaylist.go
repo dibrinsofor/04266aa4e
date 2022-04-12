@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AddUrl(c *gin.Context) {
+func AddPlaylist(c *gin.Context) {
 	var u models.Playlist
 
 	if c.BindJSON(&u) != nil {
