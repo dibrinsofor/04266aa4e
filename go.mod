@@ -7,8 +7,6 @@ require (
 	go.mongodb.org/mongo-driver v1.8.3
 )
 
-require github.com/gin-contrib/cors v1.3.1
-
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
