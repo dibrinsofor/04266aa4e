@@ -6,6 +6,7 @@ import (
 
 	"github.com/dibrinsofor/urlplaylists/models"
 	"github.com/gin-gonic/gin"
+	"github.com/lithammer/shortuuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +20,7 @@ func AddPlaylist(c *gin.Context) {
 		return
 	}
 
-	u.RandSlug = models.GetPlaylistSlug()
+	u.RandSlug = shortuuid.New()
 	log.Print(u.RandSlug)
 
 	u.ID = primitive.NewObjectID()
@@ -31,9 +32,10 @@ func AddPlaylist(c *gin.Context) {
 		})
 	}
 
-	// TODO construct a new uri an pass that in the response too
+	// TODO sanitize dead or repeated links in queue
 	c.JSON(http.StatusOK, gin.H{
 		"message": "playlist successfully stored.",
-		"data":    u,
+		"data":    u.RandSlug,
+		"links":   u.Urls,
 	})
 }

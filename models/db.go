@@ -18,7 +18,7 @@ import (
 var client *mongo.Client
 
 func GetConnection() (*mongo.Client, context.Context) {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		// log.Fatal("Error loading .env file")
 		log.Fatalf("Error: %s", err)
