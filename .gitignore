@@ -1,3 +1,4 @@
 /templates
 /.vscode
 *.env
+dump.rdb
