@@ -20,7 +20,9 @@ func GetUrls(c *gin.Context) {
 	fmt.Print(playlist)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "playlist retrieved succesfully",
-		"data":    playlist.Urls,
+		"message":     "playlist retrieved succesfully",
+		"title":       playlist.Title,
+		"description": playlist.Description,
+		"urls":        playlist.Urls,
 	})
 }

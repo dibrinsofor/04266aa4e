@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO clean up returned data
 func GetAllPlaylists(c *gin.Context) {
 
 	playlists, err := models.FindAllPlaylists()

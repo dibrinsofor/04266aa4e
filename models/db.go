@@ -18,9 +18,10 @@ import (
 var client *mongo.Client
 
 func GetConnection() (*mongo.Client, context.Context) {
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		// log.Fatal("Error loading .env file")
+		log.Fatalf("Error: %s", err)
 	}
 
 	client, err = mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
@@ -28,7 +29,7 @@ func GetConnection() (*mongo.Client, context.Context) {
 		log.Printf("Failed to create client: %s", err)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*30)
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*50)
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Printf("Failed to connect to database cluster: %s", err)
